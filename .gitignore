@@ -20,6 +20,7 @@ server.pid
 *.eml
 /dist/
 .cache
+.bsp
 
 logs
 target
