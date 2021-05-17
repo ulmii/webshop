@@ -15,3 +15,10 @@ GET           /products/:id        controllers.ProductController.findOne(id: Str
 POST          /products            controllers.ProductController.create()
 PUT           /products/:id        controllers.ProductController.update(id: String)
 DELETE        /products/:id        controllers.ProductController.delete(id: String)
+
+# products routing
+GET           /users            controllers.UserController.findAll()
+GET           /users/:id        controllers.UserController.findOne(id: String)
+POST          /users            controllers.UserController.create()
+PUT           /users/:id        controllers.UserController.update(id: String)
+DELETE        /users/:id        controllers.UserController.delete(id: String)

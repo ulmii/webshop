@@ -17,27 +17,22 @@ object Product {
   implicit val fmt: OFormat[Product] = Json.format[Product]
 
   implicit object ProductBSONReader extends BSONDocumentReader[Product] {
-    def read(doc: BSONDocument): Product = {
-      Product(
-        doc.getAs[BSONObjectID]("_id").map(dt => dt.stringify),
-        doc.getAs[String]("title").get,
-        doc.getAs[String]("description").get,
-        doc.getAs[Long]("_creationTime"),
-        doc.getAs[Long]("_updateTime")
-      )
-    }
+    def read(doc: BSONDocument): Product = Product(
+      doc.getAs[BSONObjectID]("_id").map(dt => dt.stringify),
+      doc.getAs[String]("title").get,
+      doc.getAs[String]("description").get,
+      doc.getAs[Long]("_creationTime"),
+      doc.getAs[Long]("_updateTime")
+    )
   }
 
   implicit object ProductBSONWriter extends BSONDocumentWriter[Product] {
-    def write(product: Product): BSONDocument = {
-      BSONDocument(
-        "_id" -> product._id,
-        "title" -> product.title,
-        "description" -> product.description,
-        "_creationTime" -> product._creationTime,
-        "_updateTime" -> product._updateTime
-      )
-    }
+    def write(product: Product): BSONDocument = BSONDocument(
+      "_id" -> product._id,
+      "title" -> product.title,
+      "description" -> product.description,
+      "_creationTime" -> product._creationTime,
+      "_updateTime" -> product._updateTime
+    )
   }
-
 }
