@@ -8,10 +8,10 @@ case class Product(
                     _id: Option[String],
                     title: String,
                     description: String,
-                    _updateTime: Option[Long]
+                    _updated: Option[Long]
                   )
   extends ApiModel[Product] {
-  override protected def makeNew(updateTime: Option[Long]): Product = new Product(_id, title, description, updateTime)
+  override protected def makeNew(updated: Option[Long]): Product = new Product(_id, title, description, updated)
 }
 
 object Product {
@@ -23,7 +23,7 @@ object Product {
       doc.getAs[BSONObjectID]("_id").map(dt => dt.stringify),
       doc.getAs[String]("title").get,
       doc.getAs[String]("description").get,
-      doc.getAs[Long]("_updateTime")
+      doc.getAs[Long]("_updated")
     )
   }
 
@@ -32,7 +32,7 @@ object Product {
       "_id" -> product._id,
       "title" -> product.title,
       "description" -> product.description,
-      "_updateTime" -> product._updateTime
+      "_updated" -> product._updated
     )
   }
 

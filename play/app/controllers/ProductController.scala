@@ -1,11 +1,13 @@
 package controllers
 
+import java.time.Instant
+
 import javax.inject.{Inject, Singleton}
-import models.Product
+import models.{Category, Product}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import reactivemongo.api.bson.BSONObjectID
-import repository.ProductRepository
+import repository.{CategoryRepository, ProductRepository}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -14,6 +16,7 @@ import scala.util.{Failure, Success}
 class ProductController @Inject()(
                                    implicit executionContext: ExecutionContext,
                                    val productRepository: ProductRepository,
+                                   val categoryRepository: CategoryRepository,
                                    val controllerComponents: ControllerComponents)
   extends BaseController {
 
@@ -37,10 +40,15 @@ class ProductController @Inject()(
 
     request.body.validate[Product].fold(
       _ => Future.successful(BadRequest("Cannot parse request")),
-      product =>
+      product => {
+        categoryRepository.findByName("nowe").map(cat => if (cat.isEmpty) {
+          categoryRepository.create(new Category(Some(BSONObjectID.generate().stringify), "nowe", Some(Instant.now().getEpochSecond)))
+        })
+
         productRepository.create(product).map {
           _ => Created(Json.toJson(product))
         }
+      }
     )
   }
   }

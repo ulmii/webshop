@@ -9,8 +9,11 @@ case class User(
                  password: String,
                  email: String,
                  address: Option[Address],
-                 _updateTime: Option[Long]
+                 _updated: Option[Long]
                )
+  extends ApiModel[User] {
+  override protected def makeNew(updated: Option[Long]): User = new User(_id, username, password, email, address, updated)
+}
 
 object User {
   implicit val bObjectIdFormat: OFormat[BSONObjectID] = Json.format[BSONObjectID]
@@ -24,7 +27,7 @@ object User {
       null,
       doc.getAs[String]("email").get,
       doc.getAs[Address]("address"),
-      doc.getAs[Long]("_updateTime")
+      doc.getAs[Long]("_updated")
     )
   }
 
@@ -35,7 +38,7 @@ object User {
       "password" -> user.password,
       "email" -> user.email,
       "address" -> user.address,
-      "_updateTime" -> user._updateTime
+      "_updated" -> user._updated
     )
   }
 
