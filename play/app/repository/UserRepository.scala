@@ -34,7 +34,7 @@ class UserRepository @Inject()(
 
   def create(User: User): Future[WriteResult] = {
     collection.flatMap(_.insert(ordered = false)
-      .one(User.copy(_creationTime = Some(Instant.now().getEpochSecond), _updateTime = Some(Instant.now().getEpochSecond))))
+      .one(User.copy(_updateTime = Some(Instant.now().getEpochSecond))))
   }
 
   def update(id: BSONObjectID, User: User): Future[WriteResult] = {

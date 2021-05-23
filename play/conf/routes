@@ -16,7 +16,7 @@ POST          /products            controllers.ProductController.create()
 PUT           /products/:id        controllers.ProductController.update(id: String)
 DELETE        /products/:id        controllers.ProductController.delete(id: String)
 
-# products routing
+# users routing
 GET           /users            controllers.UserController.findAll()
 GET           /users/:id        controllers.UserController.findOne(id: String)
 POST          /users            controllers.UserController.create()

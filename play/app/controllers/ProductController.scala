@@ -45,8 +45,7 @@ class ProductController @Inject()(
   }
   }
 
-  def update(
-              id: String): Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
+  def update(id: String): Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
     request.body.validate[Product].fold(
       _ => Future.successful(BadRequest("Cannot parse request")),
       product => {

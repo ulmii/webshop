@@ -9,7 +9,6 @@ case class User(
                  password: String,
                  email: String,
                  address: Option[Address],
-                 _creationTime: Option[Long],
                  _updateTime: Option[Long]
                )
 
@@ -25,7 +24,6 @@ object User {
       null,
       doc.getAs[String]("email").get,
       doc.getAs[Address]("address"),
-      doc.getAs[Long]("_creationTime"),
       doc.getAs[Long]("_updateTime")
     )
   }
@@ -37,7 +35,6 @@ object User {
       "password" -> user.password,
       "email" -> user.email,
       "address" -> user.address,
-      "_creationTime" -> user._creationTime,
       "_updateTime" -> user._updateTime
     )
   }

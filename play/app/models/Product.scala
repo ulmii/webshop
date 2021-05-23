@@ -8,9 +8,11 @@ case class Product(
                     _id: Option[String],
                     title: String,
                     description: String,
-                    _creationTime: Option[Long],
                     _updateTime: Option[Long]
                   )
+  extends ApiModel[Product] {
+  override protected def makeNew(updateTime: Option[Long]): Product = new Product(_id, title, description, updateTime)
+}
 
 object Product {
   implicit val bObjectIdFormat: OFormat[BSONObjectID] = Json.format[BSONObjectID]
@@ -21,7 +23,6 @@ object Product {
       doc.getAs[BSONObjectID]("_id").map(dt => dt.stringify),
       doc.getAs[String]("title").get,
       doc.getAs[String]("description").get,
-      doc.getAs[Long]("_creationTime"),
       doc.getAs[Long]("_updateTime")
     )
   }
@@ -31,8 +32,8 @@ object Product {
       "_id" -> product._id,
       "title" -> product.title,
       "description" -> product.description,
-      "_creationTime" -> product._creationTime,
       "_updateTime" -> product._updateTime
     )
   }
+
 }
