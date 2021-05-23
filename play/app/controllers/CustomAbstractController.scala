@@ -16,18 +16,14 @@ abstract class CustomAbstractController[T <: ApiModel[T] : Writes : Reads](
   extends BaseController {
 
   def findAll(): Action[AnyContent] = Action.async(implicit request =>
-    repository.findAll().map {
-      users => Ok(Json.toJson(users))
-    }
+    repository.findAll().map(users => Ok(Json.toJson(users)))
   )
 
   def findOne(id: String): Action[AnyContent] = Action.async(implicit request => {
 
     val objectIdTryResult = BSONObjectID.parse(id)
     objectIdTryResult match {
-      case Success(objectId) => repository.findOne(objectId).map {
-        model => Ok(Json.toJson(model))
-      }
+      case Success(objectId) => repository.findOne(objectId).map(model => Ok(Json.toJson(model)))
       case Failure(_) => Future.successful(BadRequest("Cannot parse id"))
     }
   })
@@ -37,9 +33,7 @@ abstract class CustomAbstractController[T <: ApiModel[T] : Writes : Reads](
     request.body.validate[T].fold(
       _ => Future.successful(BadRequest("Cannot parse request")),
       model =>
-        repository.create(model).map {
-          _ => Created(Json.toJson(model))
-        }
+        repository.create(model).map(_ => Created(Json.toJson(model)))
     )
   })
 
