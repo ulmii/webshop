@@ -4,10 +4,10 @@ import play.api.libs.json.{Json, OFormat}
 import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 
 case class Category(
-                    _id: Option[String],
-                    name: String,
-                    _updated: Option[Long]
-                  )
+                     _id: Option[String],
+                     name: String,
+                     _updated: Option[Long]
+                   )
   extends ApiModel[Category] {
   override protected def makeNew(updated: Option[Long]): Category = new Category(_id, name, updated)
 }
