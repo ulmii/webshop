@@ -1,7 +1,7 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 
 case class Address(
                     country: Option[String],

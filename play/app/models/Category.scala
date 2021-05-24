@@ -4,7 +4,7 @@ import play.api.libs.json.{Json, OFormat}
 import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 
 case class Category(
-                     _id: Option[String],
+                     _id: Option[BSONObjectID] = Some(BSONObjectID.generate()),
                      name: String,
                      _updated: Option[Long]
                    )
@@ -18,7 +18,7 @@ object Category {
 
   implicit object ProductBSONReader extends BSONDocumentReader[Category] {
     def read(doc: BSONDocument): Category = Category(
-      doc.getAs[BSONObjectID]("_id").map(dt => dt.stringify),
+      doc.getAs[BSONObjectID]("_id"),
       doc.getAs[String]("name").get,
       doc.getAs[Long]("_updated")
     )

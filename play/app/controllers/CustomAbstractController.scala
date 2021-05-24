@@ -3,7 +3,7 @@ package controllers
 import models.ApiModel
 import play.api.libs.json.{JsValue, Json, Reads, Writes}
 import play.api.mvc._
-import reactivemongo.api.bson.BSONObjectID
+import reactivemongo.bson.BSONObjectID
 import repository.AbstractRepository
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,8 +15,10 @@ abstract class CustomAbstractController[T <: ApiModel[T] : Writes : Reads](
                                                                             val controllerComponents: ControllerComponents)
   extends BaseController {
 
-  def findAll(): Action[AnyContent] = Action.async(implicit request =>
-    repository.findAll().map(users => Ok(Json.toJson(users)))
+  def findAll(): Action[AnyContent] = Action.async(implicit request => {
+    repository.findAll()
+      .map(users => Ok(Json.toJson(users)))
+  }
   )
 
   def findOne(id: String): Action[AnyContent] = Action.async(implicit request => {

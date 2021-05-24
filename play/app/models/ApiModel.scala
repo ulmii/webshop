@@ -1,7 +1,9 @@
 package models
 
+import reactivemongo.bson.BSONObjectID
+
 trait ApiModel[+Self <: ApiModel[Self]] {
-  def _id: Option[String]
+  def _id: Option[BSONObjectID]
 
   def _updated: Option[Long]
 

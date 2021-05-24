@@ -6,9 +6,10 @@ import models.ApiModel
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.bson.compat._
-import reactivemongo.api.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter}
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.{Cursor, ReadPreference}
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.{ExecutionContext, Future}
 

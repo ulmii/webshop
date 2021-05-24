@@ -1,11 +1,11 @@
 package models
 
+import format.BSONObjectIDFormat
 import play.api.libs.json.{Json, OFormat}
 import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID, _}
 
 case class User(
-                 _id: Option[String],
-                 username: String,
+                 _id: Option[BSONObjectID] = Some(BSONObjectID.generate()),
                  password: String,
                  email: String,
                  address: Option[Address],
@@ -13,19 +13,18 @@ case class User(
                  _updated: Option[Long]
                )
   extends ApiModel[User] {
-  override protected def makeNew(updated: Option[Long]): User = new User(_id, username, password, email, address, basket, updated)
+  override protected def makeNew(updated: Option[Long]): User = new User(_id, password, email, address, basket, updated)
 }
 
 object User {
-  implicit val bObjectIdFormat: OFormat[BSONObjectID] = Json.format[BSONObjectID]
+  implicit val objectIdFormat: BSONObjectIDFormat.type = BSONObjectIDFormat
   implicit val bBasket: OFormat[Basket] = Json.format[Basket]
   implicit val bAddress: OFormat[Address] = Json.format[Address]
   implicit val fmt: OFormat[User] = Json.format[User]
 
   implicit object UserBSONReader extends BSONDocumentReader[User] {
     def read(doc: BSONDocument): User = User(
-      doc.getAs[BSONObjectID]("_id").map(dt => dt.stringify),
-      doc.getAs[String]("username").get,
+      doc.getAs[BSONObjectID]("_id"),
       null,
       doc.getAs[String]("email").get,
       doc.getAs[Address]("address"),
@@ -37,11 +36,10 @@ object User {
   implicit object UserBSONWriter extends BSONDocumentWriter[User] {
     def write(user: User): BSONDocument = BSONDocument(
       "_id" -> user._id,
-      "username" -> user.username,
       "password" -> user.password,
       "email" -> user.email,
       "address" -> user.address,
-      "basket" -> user.basket.get.username,
+      "basket" -> user.basket,
       "_updated" -> user._updated
     )
   }

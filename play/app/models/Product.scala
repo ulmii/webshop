@@ -1,13 +1,14 @@
 package models
 
 
+import format.BSONObjectIDFormat
 import play.api.libs.json.{Json, OFormat}
 import reactivemongo.bson.{BSONObjectID, _}
 
 case class Product(
-                    _id: Option[String],
-                    title: String,
-                    description: String,
+                    _id: Option[BSONObjectID] = Some(BSONObjectID.generate()),
+                    title: Option[String],
+                    description: Option[String],
                     _updated: Option[Long]
                   )
   extends ApiModel[Product] {
@@ -15,14 +16,14 @@ case class Product(
 }
 
 object Product {
-  implicit val bObjectIdFormat: OFormat[BSONObjectID] = Json.format[BSONObjectID]
+  implicit val objectIdFormat: BSONObjectIDFormat.type = BSONObjectIDFormat
   implicit val fmt: OFormat[Product] = Json.format[Product]
 
   implicit object ProductBSONReader extends BSONDocumentReader[Product] {
     def read(doc: BSONDocument): Product = Product(
-      doc.getAs[BSONObjectID]("_id").map(dt => dt.stringify),
-      doc.getAs[String]("title").get,
-      doc.getAs[String]("description").get,
+      doc.getAs[BSONObjectID]("_id"),
+      doc.getAs[String]("title"),
+      doc.getAs[String]("description"),
       doc.getAs[Long]("_updated")
     )
   }
@@ -37,3 +38,5 @@ object Product {
   }
 
 }
+
+

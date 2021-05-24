@@ -1,11 +1,11 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 
 case class Basket(
-                   username: String,
-                   products: Option[List[Product]],
+                   userId: String,
+                   products: Option[Seq[Product]],
                    _updated: Option[Long]
                  )
 
@@ -14,15 +14,15 @@ object Basket {
 
   implicit object BasketBSONReader extends BSONDocumentReader[Basket] {
     def read(doc: BSONDocument): Basket = Basket(
-      doc.getAs[String]("username").get,
-      doc.getAs[List[Product]]("products"),
+      doc.getAs[String]("userId").get,
+      doc.getAs[Seq[Product]]("products"),
       doc.getAs[Long]("_updated")
     )
   }
 
   implicit object BasketBSONWriter extends BSONDocumentWriter[Basket] {
     def write(basket: Basket): BSONDocument = BSONDocument(
-      "username" -> basket.username,
+      "userId" -> basket.userId,
       "products" -> basket.products,
       "_updated" -> basket._updated
     )

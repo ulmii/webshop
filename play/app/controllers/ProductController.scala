@@ -6,7 +6,7 @@ import javax.inject.{Inject, Singleton}
 import models.{Category, Product}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import reactivemongo.api.bson.BSONObjectID
+import reactivemongo.bson.BSONObjectID
 import repository.{CategoryRepository, ProductRepository}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class ProductController @Inject()(
       _ => Future.successful(BadRequest("Cannot parse request")),
       product => {
         categoryRepository.findByName("nowe").map(cat => if (cat.isEmpty) {
-          categoryRepository.create(new Category(Some(BSONObjectID.generate().stringify), "nowe", Some(Instant.now().getEpochSecond)))
+          categoryRepository.create(new Category(name = "nowe", _updated = Some(Instant.now().getEpochSecond)))
         })
 
         productRepository.create(product).map {
