@@ -6,14 +6,14 @@ import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter,
 
 case class User(
                  _id: Option[BSONObjectID] = Some(BSONObjectID.generate()),
-                 password: String,
                  email: String,
                  address: Option[Address],
                  basket: Option[Basket],
+                 details: Option[UserDetails],
                  _updated: Option[Long]
                )
   extends ApiModel[User] {
-  override protected def makeNew(updated: Option[Long]): User = new User(_id, password, email, address, basket, updated)
+  override protected def makeNew(updated: Option[Long]): User = new User(_id, email, address, basket, details, updated)
 }
 
 object User {
@@ -25,10 +25,10 @@ object User {
   implicit object UserBSONReader extends BSONDocumentReader[User] {
     def read(doc: BSONDocument): User = User(
       doc.getAs[BSONObjectID]("_id"),
-      null,
       doc.getAs[String]("email").get,
       doc.getAs[Address]("address"),
       doc.getAs[Basket]("basket"),
+      doc.getAs[UserDetails]("details"),
       doc.getAs[Long]("_updated")
     )
   }
@@ -36,10 +36,10 @@ object User {
   implicit object UserBSONWriter extends BSONDocumentWriter[User] {
     def write(user: User): BSONDocument = BSONDocument(
       "_id" -> user._id,
-      "password" -> user.password,
       "email" -> user.email,
       "address" -> user.address,
       "basket" -> user.basket,
+      "details" -> user.details,
       "_updated" -> user._updated
     )
   }

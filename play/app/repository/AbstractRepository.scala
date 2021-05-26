@@ -16,7 +16,8 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class AbstractRepository[T <: ApiModel[T] : BSONDocumentReader : BSONDocumentWriter](
                                                                                                implicit executionContext: ExecutionContext,
                                                                                                reactiveMongoApi: ReactiveMongoApi
-                                                                                             ) {
+                                                                                             )
+  extends Repository[T] {
   def collection: Future[BSONCollection]
 
   def findAll(limit: Int = 100): Future[Seq[T]] = {

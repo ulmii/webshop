@@ -1,18 +1,17 @@
 package controllers
 
-import models.ApiModel
 import play.api.libs.json.{JsValue, Json, Reads, Writes}
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
-import repository.AbstractRepository
+import repository.{AbstractRepository, Repository}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-abstract class CustomAbstractController[T <: ApiModel[T] : Writes : Reads](
-                                                                            implicit executionContext: ExecutionContext,
-                                                                            val repository: AbstractRepository[T],
-                                                                            val controllerComponents: ControllerComponents)
+abstract class CustomAbstractController[T: Writes : Reads](
+                                                            implicit executionContext: ExecutionContext,
+                                                            val repository: Repository[T],
+                                                            val controllerComponents: ControllerComponents)
   extends BaseController {
 
   def findAll(): Action[AnyContent] = Action.async(implicit request => {
