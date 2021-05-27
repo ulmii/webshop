@@ -4,7 +4,6 @@ import javax.inject.Inject
 import models.Product
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.bson.collection.BSONCollection
-import reactivemongo.api.bson.compat._
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -2,8 +2,8 @@ package controllers
 
 import play.api.libs.json.{JsValue, Json, Reads, Writes}
 import play.api.mvc._
-import reactivemongo.bson.BSONObjectID
-import repository.{AbstractRepository, Repository}
+import reactivemongo.api.bson.BSONObjectID
+import repository.Repository
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -24,7 +24,7 @@ abstract class CustomAbstractController[T: Writes : Reads](
 
     val objectIdTryResult = BSONObjectID.parse(id)
     objectIdTryResult match {
-      case Success(objectId) => repository.findOne(objectId).map(model => Ok(Json.toJson(model)))
+      case Success(objectId) => repository.findOne(id).map(model => Ok(Json.toJson(model)))
       case Failure(_) => Future.successful(BadRequest("Cannot parse id"))
     }
   })
@@ -45,7 +45,7 @@ abstract class CustomAbstractController[T: Writes : Reads](
       model => {
         val objectIdTryResult = BSONObjectID.parse(id)
         objectIdTryResult match {
-          case Success(objectId) => repository.update(objectId, model).map(result => Ok(Json.toJson(result.ok)))
+          case Success(objectId) => repository.update(id, model).map(result => Ok(Json.toJson(result.ok)))
           case Failure(_) => Future.successful(BadRequest("Cannot parse id"))
         }
       }
@@ -56,7 +56,7 @@ abstract class CustomAbstractController[T: Writes : Reads](
 
     val objectIdTryResult = BSONObjectID.parse(id)
     objectIdTryResult match {
-      case Success(objectId) => repository.delete(objectId).map(_ => NoContent)
+      case Success(objectId) => repository.delete(id).map(_ => NoContent)
       case Failure(_) => Future.successful(BadRequest("Cannot parse id"))
     }
   })

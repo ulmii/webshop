@@ -1,7 +1,7 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
+import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter, Macros}
 
 case class UserDetails(
                         userId: String,
@@ -16,22 +16,8 @@ case class UserDetails(
 object UserDetails {
   implicit val fmt: OFormat[UserDetails] = Json.format[UserDetails]
 
-  implicit object UserDetailsBSONReader extends BSONDocumentReader[UserDetails] {
-    def read(doc: BSONDocument): UserDetails = UserDetails(
-      doc.getAs[String]("userId").get,
-      doc.getAs[String]("firstName"),
-      doc.getAs[String]("name"),
-      doc.getAs[Long]("_updated")
-    )
-  }
+  implicit def userDetailsWriter: BSONDocumentWriter[UserDetails] = Macros.writer[UserDetails]
 
-  implicit object UserDetailsBSONWriter extends BSONDocumentWriter[UserDetails] {
-    def write(details: UserDetails): BSONDocument = BSONDocument(
-      "userId" -> details.userId,
-      "firstName" -> details.firstName,
-      "lastName" -> details.lastName,
-      "_updated" -> details._updated
-    )
-  }
+  implicit def userDetailsReader: BSONDocumentReader[UserDetails] = Macros.reader[UserDetails]
 
 }

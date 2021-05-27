@@ -4,8 +4,8 @@ import javax.inject.{Inject, Singleton}
 import models.Basket
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import reactivemongo.bson.BSONObjectID
-import repository.{BasketRepository, UserRepository}
+import reactivemongo.api.bson.BSONObjectID
+import repository.BasketRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -24,7 +24,7 @@ class BasketController @Inject()(
       basket => {
         val objectIdTryResult = BSONObjectID.parse(basket.userId)
         objectIdTryResult match {
-          case Success(objectId) => repository.update(objectId, basket)
+          case Success(objectId) => repository.update(basket.userId, basket)
             .map(_ => Created(Json.toJson(basket)))
           case Failure(_) => Future.successful(BadRequest("Cannot parse basket id"))
         }

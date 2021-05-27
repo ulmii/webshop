@@ -3,22 +3,22 @@ package repository
 import java.time.Instant
 
 import javax.inject.Inject
-import models.{Basket, User, UserDetails}
+import models.{User, UserDetails}
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.bson.compat._
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.{Cursor, ReadPreference}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserDetailsRepository @Inject()(
-                                  implicit executionContext: ExecutionContext,
-                                  reactiveMongoApi: ReactiveMongoApi,
-                                  userRepository: UserRepository,
-                                  productRepository: ProductRepository
-                                )
+                                       implicit executionContext: ExecutionContext,
+                                       reactiveMongoApi: ReactiveMongoApi,
+                                       userRepository: UserRepository,
+                                       productRepository: ProductRepository
+                                     )
   extends Repository[UserDetails] {
   def collection: Future[BSONCollection] = reactiveMongoApi.database.map(db => db.collection("users"))
 
@@ -30,29 +30,29 @@ class UserDetailsRepository @Inject()(
         .map(s => s.filter(user => user.details.isDefined).map(user => user.details.get)))
   }
 
-  override def findOne(id: BSONObjectID): Future[Option[UserDetails]] = {
+  override def findOne(id: String): Future[Option[UserDetails]] = {
     collection.flatMap(
-      _.find(BSONDocument("_id" -> id), Option.empty[User])
+      _.find(BSONDocument("id" -> id), Option.empty[User])
         .one[User]
         .map(s => s.filter(user => user.details.isDefined)
           .map(user => user.details.get))
     )
   }
 
-  def update(id: BSONObjectID, apiModel: UserDetails): Future[WriteResult] = {
+  def update(id: String, apiModel: UserDetails): Future[WriteResult] = {
 
     collection.flatMap(col => {
       val updateBuilder = col.update(true)
-      updateBuilder.one(BSONDocument("_id" -> id),
+      updateBuilder.one(BSONDocument("id" -> id),
         BSONDocument("$set" -> BSONDocument(
           "details" -> apiModel.copy(_updated = Some(Instant.now().getEpochSecond))
         )))
     })
   }
 
-  def delete(id: BSONObjectID): Future[WriteResult] = {
+  def delete(id: String): Future[WriteResult] = {
     collection.flatMap(
-      _.delete().one(BSONDocument("_id" -> id), Some(1))
+      _.delete().one(BSONDocument("id" -> id), Some(1))
     )
   }
 

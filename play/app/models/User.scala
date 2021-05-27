@@ -1,48 +1,51 @@
 package models
 
-import format.BSONObjectIDFormat
+import com.mohiva.play.silhouette.api.util.PasswordInfo
+import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import com.mohiva.play.silhouette.password.BCryptSha256PasswordHasher
 import play.api.libs.json.{Json, OFormat}
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID, _}
+import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter, BSONObjectID, Macros}
 
 case class User(
-                 _id: Option[BSONObjectID] = Some(BSONObjectID.generate()),
+                 id: Option[String] = Some(BSONObjectID.generate().stringify),
                  email: String,
+                 password: String,
                  address: Option[Address],
                  basket: Option[Basket],
                  details: Option[UserDetails],
+                 _loginInfo: Option[LoginInfo],
                  _updated: Option[Long]
                )
-  extends ApiModel[User] {
-  override protected def makeNew(updated: Option[Long]): User = new User(_id, email, address, basket, details, updated)
+  extends ApiModel[User] with Identity {
+  override protected def makeNew(updated: Option[Long]): User = new User(id = Some(BSONObjectID.generate().stringify), email, password, address, basket, details, _loginInfo, updated)
+
+  /**
+   * Generates login info from email
+   *
+   * @return login info
+   */
+  def loginInfo: LoginInfo = LoginInfo(CredentialsProvider.ID, email)
+
+  /**
+   * Generates password info from password.
+   *
+   * @return password info
+   */
+  def passwordInfo: PasswordInfo = PasswordInfo(BCryptSha256PasswordHasher.ID, "password")
 }
 
 object User {
-  implicit val objectIdFormat: BSONObjectIDFormat.type = BSONObjectIDFormat
-  implicit val bBasket: OFormat[Basket] = Json.format[Basket]
-  implicit val bAddress: OFormat[Address] = Json.format[Address]
+  implicit val bLoginInfo: OFormat[LoginInfo] = Json.format[LoginInfo]
   implicit val fmt: OFormat[User] = Json.format[User]
 
-  implicit object UserBSONReader extends BSONDocumentReader[User] {
-    def read(doc: BSONDocument): User = User(
-      doc.getAs[BSONObjectID]("_id"),
-      doc.getAs[String]("email").get,
-      doc.getAs[Address]("address"),
-      doc.getAs[Basket]("basket"),
-      doc.getAs[UserDetails]("details"),
-      doc.getAs[Long]("_updated")
-    )
-  }
+  implicit def LoginInfoReader: BSONDocumentReader[LoginInfo] = Macros.reader[LoginInfo]
 
-  implicit object UserBSONWriter extends BSONDocumentWriter[User] {
-    def write(user: User): BSONDocument = BSONDocument(
-      "_id" -> user._id,
-      "email" -> user.email,
-      "address" -> user.address,
-      "basket" -> user.basket,
-      "details" -> user.details,
-      "_updated" -> user._updated
-    )
-  }
+  implicit def LoginInfoWriter: BSONDocumentWriter[LoginInfo] = Macros.writer[LoginInfo]
+
+  implicit def userWriter: BSONDocumentWriter[User] = Macros.writer[User]
+
+  implicit def userReader: BSONDocumentReader[User] = Macros.reader[User]
 
 }
 

@@ -6,10 +6,9 @@ import models.ApiModel
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.bson.compat._
-import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter}
+import reactivemongo.api.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.{Cursor, ReadPreference}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -29,8 +28,8 @@ abstract class AbstractRepository[T <: ApiModel[T] : BSONDocumentReader : BSONDo
     )
   }
 
-  def findOne(id: BSONObjectID): Future[Option[T]] = {
-    collection.flatMap(_.find(BSONDocument("_id" -> id), Option.empty[T]).one[T])
+  def findOne(id: String): Future[Option[T]] = {
+    collection.flatMap(_.find(BSONDocument("id" -> id), Option.empty[T]).one[T])
   }
 
   def create(apiModel: T): Future[WriteResult] = {
@@ -38,16 +37,16 @@ abstract class AbstractRepository[T <: ApiModel[T] : BSONDocumentReader : BSONDo
       .one(apiModel.copyNew(Some(Instant.now().getEpochSecond))))
   }
 
-  def update(id: BSONObjectID, apiModel: T): Future[WriteResult] = {
+  def update(id: String, apiModel: T): Future[WriteResult] = {
 
     collection.flatMap(
-      _.update(ordered = false).one(BSONDocument("_id" -> id),
+      _.update(ordered = false).one(BSONDocument("id" -> id),
         apiModel.copyNew(Some(Instant.now().getEpochSecond))))
   }
 
-  def delete(id: BSONObjectID): Future[WriteResult] = {
+  def delete(id: String): Future[WriteResult] = {
     collection.flatMap(
-      _.delete().one(BSONDocument("_id" -> id), Some(1))
+      _.delete().one(BSONDocument("id" -> id), Some(1))
     )
   }
 }

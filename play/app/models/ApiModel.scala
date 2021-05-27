@@ -1,11 +1,14 @@
 package models
 
-import reactivemongo.bson.BSONObjectID
 
 trait ApiModel[+Self <: ApiModel[Self]] {
-  def _id: Option[BSONObjectID]
+  def id: Option[String]
 
   def _updated: Option[Long]
+
+  def createNew(updated: Option[Long]): Self = {
+    makeNew(updated)
+  }
 
   def copyNew(updated: Option[Long]): Self = {
     makeNew(updated)
