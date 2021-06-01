@@ -5,7 +5,7 @@ import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter, Macros}
 
 
 case class Basket(
-                   userId: String,
+                   userId: Option[String] = None,
                    products: Option[Seq[Product]],
                    _updated: Option[Long]
                  )

@@ -38,10 +38,9 @@ class PasswordInfoImpl @Inject()(userService: UserIdentityService)(implicit val 
    * @param passwordInfo user's hashed password
    */
   override def update(loginInfo: LoginInfo, passwordInfo: PasswordInfo): Future[PasswordInfo] = userService.retrieve(loginInfo).flatMap {
-    case Some(user) => {
-      userService.updateUser(user.copy(password = passwordInfo.password))
+    case Some(user) =>
+      userService.updateUser(user.copy(password = Some(passwordInfo.password)))
       Future.successful(passwordInfo)
-    }
     case None => Future.failed(new Exception("user not found"))
   }
 

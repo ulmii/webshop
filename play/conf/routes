@@ -35,3 +35,7 @@ POST          /baskets                    controllers.BasketController.create()
 GET           /userDetails                controllers.UserDetailsController.findAll()
 GET           /userDetails/:userId        controllers.UserDetailsController.findOne(userId: String)
 POST          /userDetails                controllers.UserDetailsController.create()
+
+# Auth
+POST        /signUp                                   controllers.SignUpController.signUp()
+POST        /signIn                                   controllers.SignInController.signIn()

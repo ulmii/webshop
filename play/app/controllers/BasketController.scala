@@ -1,32 +1,35 @@
 package controllers
 
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import javax.inject.{Inject, Singleton}
 import models.Basket
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc._
-import reactivemongo.api.bson.BSONObjectID
 import repository.BasketRepository
+import utils.auth.{DefaultEnv, WithProvider}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 @Singleton
 class BasketController @Inject()(
                                   implicit executionContext: ExecutionContext,
                                   val basketRepository: BasketRepository,
-                                  implicit override val controllerComponents: ControllerComponents)
+                                  scc: SilhouetteControllerComponents)
   extends CustomAbstractController[Basket] {
 
-  override def create(): Action[JsValue] = Action.async(controllerComponents.parsers.json)(implicit request => {
-
+  override def create(): Action[JsValue] = SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(scc.parsers.json)(implicit request => {
     request.body.validate[Basket].fold(
       _ => Future.successful(BadRequest("Cannot parse request")),
       basket => {
-        val objectIdTryResult = BSONObjectID.parse(basket.userId)
-        objectIdTryResult match {
-          case Success(objectId) => repository.update(basket.userId, basket)
-            .map(_ => Created(Json.toJson(basket)))
-          case Failure(_) => Future.successful(BadRequest("Cannot parse basket id"))
+        userService.retrieve(request.identity.loginInfo).flatMap {
+          case Some(_) =>
+            for {
+              result <- repository.update(request.identity.id.get, basket.copy(userId = request.identity.id))
+                .map(_ => Created(Json.toJson(basket.copy(userId = request.identity.id))))
+            } yield {
+              result
+            }
+          case None => Future.successful(BadRequest(JsString("Could not find user")))
         }
       }
     )

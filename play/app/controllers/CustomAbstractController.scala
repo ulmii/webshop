@@ -11,8 +11,8 @@ import scala.util.{Failure, Success}
 abstract class CustomAbstractController[T: Writes : Reads](
                                                             implicit executionContext: ExecutionContext,
                                                             val repository: Repository[T],
-                                                            val controllerComponents: ControllerComponents)
-  extends BaseController {
+                                                            scc: SilhouetteControllerComponents
+                                                          ) extends SilhouetteController(scc) {
 
   def findAll(): Action[AnyContent] = Action.async(implicit request => {
     repository.findAll()

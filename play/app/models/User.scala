@@ -10,15 +10,14 @@ import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter, BSONObjec
 case class User(
                  id: Option[String] = Some(BSONObjectID.generate().stringify),
                  email: String,
-                 password: String,
+                 password: Option[String] = None,
                  address: Option[Address],
                  basket: Option[Basket],
                  details: Option[UserDetails],
-                 _loginInfo: Option[LoginInfo],
                  _updated: Option[Long]
                )
   extends ApiModel[User] with Identity {
-  override protected def makeNew(updated: Option[Long]): User = new User(id = Some(BSONObjectID.generate().stringify), email, password, address, basket, details, _loginInfo, updated)
+  override protected def makeNew(updated: Option[Long]): User = new User(id = Some(BSONObjectID.generate().stringify), email, password, address, basket, details, updated)
 
   /**
    * Generates login info from email
@@ -32,7 +31,7 @@ case class User(
    *
    * @return password info
    */
-  def passwordInfo: PasswordInfo = PasswordInfo(BCryptSha256PasswordHasher.ID, "password")
+  def passwordInfo: PasswordInfo = PasswordInfo(BCryptSha256PasswordHasher.ID, password.get)
 }
 
 object User {

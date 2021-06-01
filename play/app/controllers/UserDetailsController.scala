@@ -13,8 +13,8 @@ import scala.util.{Failure, Success}
 @Singleton
 class UserDetailsController @Inject()(
                                        implicit executionContext: ExecutionContext,
-                                       val userDetailsRepository: UserDetailsRepository,
-                                       implicit override val controllerComponents: ControllerComponents)
+                                        userDetailsRepository: UserDetailsRepository,
+                                        scc: SilhouetteControllerComponents)
   extends CustomAbstractController[UserDetails] {
 
   override def create(): Action[JsValue] = Action.async(controllerComponents.parsers.json)(implicit request => {

@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 class CategoryController @Inject()(
                                     implicit executionContext: ExecutionContext,
                                     val categoryRepository: CategoryRepository,
-                                    implicit override val controllerComponents: ControllerComponents)
+                                    scc: SilhouetteControllerComponents)
   extends CustomAbstractController[Category] {
 
 }
