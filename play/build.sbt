@@ -9,6 +9,8 @@ lazy val play = (project in file(".")).enablePlugins(PlayScala)
 val playSilhouetteVersion = "6.1.1"
 scalaVersion := "2.13.5"
 
+routesGenerator := InjectedRoutesGenerator
+
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 
 libraryDependencies ++= Seq(ehcache, ws, specs2 % Test, guice, filters)
