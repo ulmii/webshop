@@ -24,7 +24,7 @@ class CategoryRepository @Inject()(
 
   def createIfNone(product: models.Product): Any = {
     findByName(product.category.name).map(cat => if (cat.isEmpty) {
-      create(new Category(name = product.category.name, _updated = Some(Instant.now().getEpochSecond)))
+      create(Category(name = product.category.name, _updated = Some(Instant.now().getEpochSecond)))
     })
   }
 

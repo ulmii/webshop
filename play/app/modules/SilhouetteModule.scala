@@ -2,22 +2,32 @@ package modules
 
 import com.google.inject.{AbstractModule, Provides}
 import com.mohiva.play.silhouette.api.actions.{SecuredErrorHandler, UnsecuredErrorHandler}
-import com.mohiva.play.silhouette.api.crypto.{Crypter, CrypterAuthenticatorEncoder}
+import com.mohiva.play.silhouette.api.crypto.{Crypter, CrypterAuthenticatorEncoder, Signer}
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AuthenticatorService
 import com.mohiva.play.silhouette.api.util.{Clock, IDGenerator, PasswordHasherRegistry, _}
 import com.mohiva.play.silhouette.api.{Environment, EventBus, Silhouette, SilhouetteProvider}
-import com.mohiva.play.silhouette.crypto.{JcaCrypter, JcaCrypterSettings}
+import com.mohiva.play.silhouette.crypto.{JcaCrypter, JcaCrypterSettings, JcaSigner, JcaSignerSettings}
 import com.mohiva.play.silhouette.impl.authenticators.{JWTAuthenticator, JWTAuthenticatorService, JWTAuthenticatorSettings}
 import com.mohiva.play.silhouette.impl.providers._
+import com.mohiva.play.silhouette.impl.providers.oauth2.GoogleProvider
+import com.mohiva.play.silhouette.impl.providers.state.{CsrfStateItemHandler, CsrfStateSettings}
 import com.mohiva.play.silhouette.impl.util._
 import com.mohiva.play.silhouette.password.{BCryptPasswordHasher, BCryptSha256PasswordHasher}
-import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
+import com.mohiva.play.silhouette.persistence.daos.{DelegableAuthInfoDAO, MongoAuthInfoDAO}
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
+import com.typesafe.config.Config
 import controllers.{DefaultSilhouetteControllerComponents, SilhouetteControllerComponents}
+import javax.inject.Named
+import net.ceedubs.ficus.Ficus._
+import net.ceedubs.ficus.readers.ArbitraryTypeReader._
+import net.ceedubs.ficus.readers.ValueReader
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
+import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
+import play.api.mvc.Cookie
+import play.modules.reactivemongo.ReactiveMongoApi
 import services.UserIdentityService
 import utils.auth.{CustomSecuredErrorHandler, CustomUnsecuredErrorHandler, DefaultEnv, PasswordInfoImpl}
 
@@ -26,6 +36,19 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 
 
 class SilhouetteModule extends AbstractModule with ScalaModule {
+
+  implicit val sameSiteReader: ValueReader[Option[Option[Cookie.SameSite]]] =
+    (config: Config, path: String) => {
+      if (config.hasPathOrNull(path)) {
+        if (config.getIsNull(path))
+          Some(None)
+        else {
+          Some(Cookie.SameSite.parse(config.getString(path)))
+        }
+      } else {
+        None
+      }
+    }
 
   /**
    * Configures the module.
@@ -116,6 +139,12 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   @Provides
   def providePasswordDAO(userService: UserIdentityService): DelegableAuthInfoDAO[PasswordInfo] = new PasswordInfoImpl(userService)
 
+  @Provides
+  def provideOAuth2InfoDAO(reactiveMongoApi: ReactiveMongoApi, config: Configuration): DelegableAuthInfoDAO[OAuth2Info] = {
+    implicit lazy val format = Json.format[OAuth2Info]
+    new MongoAuthInfoDAO[OAuth2Info](reactiveMongoApi, config)
+  }
+
   /**
    * Provides the auth info repository.
    *
@@ -123,8 +152,11 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * @return The auth info repository instance.
    */
   @Provides
-  def provideAuthInfoRepository(passwordInfoDAO: DelegableAuthInfoDAO[PasswordInfo]): AuthInfoRepository = {
-    new DelegableAuthInfoRepository(passwordInfoDAO)
+  def provideAuthInfoRepository(
+                                 passwordInfoDAO: DelegableAuthInfoDAO[PasswordInfo],
+                                 oauth2InfoDAO: DelegableAuthInfoDAO[OAuth2Info],
+                               ): AuthInfoRepository = {
+    new DelegableAuthInfoRepository(passwordInfoDAO, oauth2InfoDAO)
   }
 
   /**
@@ -161,5 +193,42 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   @Provides
   def providesSilhouetteComponents(components: DefaultSilhouetteControllerComponents): SilhouetteControllerComponents = {
     components
+  }
+
+  @Provides
+  def provideSocialProviderRegistry(googleProvider: GoogleProvider): SocialProviderRegistry =
+    SocialProviderRegistry(Seq(googleProvider))
+
+  @Provides
+  def provideGoogleProvider(httpLayer: HTTPLayer,
+                            socialStateHandler: SocialStateHandler,
+                            configuration: Configuration): GoogleProvider =
+    new GoogleProvider(httpLayer, socialStateHandler, configuration.underlying.as[OAuth2Settings]("silhouette.google"))
+
+  @Provides
+  def provideSocialStateHandler(@Named("social-state-signer") signer: Signer,
+                                csrfStateItemHandler: CsrfStateItemHandler): SocialStateHandler =
+    new DefaultSocialStateHandler(Set(csrfStateItemHandler), signer)
+
+  @Provides
+  @Named("social-state-signer")
+  def provideSocialStateSigner(configuration: Configuration): Signer = {
+    val config = configuration.underlying.as[JcaSignerSettings]("silhouette.socialStateHandler.signer")
+    new JcaSigner(config)
+  }
+
+  @Provides
+  def provideCsrfStateItemHandler(idGenerator: IDGenerator,
+                                  @Named("csrf-state-item-signer") signer: Signer,
+                                  configuration: Configuration): CsrfStateItemHandler = {
+    val settings = configuration.underlying.as[CsrfStateSettings]("silhouette.csrfStateItemHandler")
+    new CsrfStateItemHandler(settings, idGenerator, signer)
+  }
+
+  @Provides
+  @Named("csrf-state-item-signer")
+  def provideCSRFStateItemSigner(configuration: Configuration): Signer = {
+    val config = configuration.underlying.as[JcaSignerSettings]("silhouette.csrfStateItemHandler.signer")
+    new JcaSigner(config)
   }
 }

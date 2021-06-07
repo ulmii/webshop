@@ -25,4 +25,8 @@ class UserIdentityService @Inject()(implicit ec: ExecutionContext, userRepositor
   def create(user: User): Future[WriteResult] = {
     userRepository.create(user)
   }
+
+  def createAndGet(user: User): Future[User] = {
+    userRepository.createAndGet(user)
+  }
 }

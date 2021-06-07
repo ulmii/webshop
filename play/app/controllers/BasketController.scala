@@ -36,7 +36,8 @@ class BasketController @Inject()(
     )
   })
 
-  def findOne(): Action[AnyContent] = SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(implicit request => {
+  def findOne(): Action[AnyContent] = SecuredAction(WithProvider[DefaultEnv#A]("google")
+    || WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(implicit request => {
 
     userService.retrieve(request.identity.loginInfo).flatMap {
       case Some(_) =>

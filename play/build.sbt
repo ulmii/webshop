@@ -3,11 +3,9 @@ organization := "uj"
 
 version := "1.0-SNAPSHOT"
 resolvers += Resolver.jcenterRepo
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 lazy val play = (project in file(".")).enablePlugins(PlayScala)
-val playSilhouetteVersion = "6.1.1"
-scalaVersion := "2.13.5"
+scalaVersion := "2.12.10"
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -25,9 +23,12 @@ libraryDependencies ++= Seq(
   // Provide JSON serialization for Joda-Time
   "com.typesafe.play" %% "play-json-joda" % "2.7.4",
 
-  "com.mohiva" %% "play-silhouette" % playSilhouetteVersion,
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % playSilhouetteVersion,
-  "com.mohiva" %% "play-silhouette-persistence" % playSilhouetteVersion,
-  "com.mohiva" %% "play-silhouette-crypto-jca" % playSilhouetteVersion,
-  "net.codingwell" %% "scala-guice" % "4.2.6"
+  "com.mohiva" %% "play-silhouette" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.7",
+  "com.mohiva" %% "play-silhouette-persistence-reactivemongo" % "5.0.6",
+  "net.codingwell" %% "scala-guice" % "4.2.6",
+  "com.iheart" %% "ficus" % "1.5.0",
+  "org.apache.commons" % "commons-lang3" % "3.12.0"
 )

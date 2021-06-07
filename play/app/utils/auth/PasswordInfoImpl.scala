@@ -12,7 +12,7 @@ import scala.reflect.ClassTag
 /**
  * PasswordInfo repository.
  */
-class PasswordInfoImpl @Inject()(userService: UserIdentityService)(implicit val classTag: ClassTag[PasswordInfo], ec: ExecutionContext)
+class PasswordInfoImpl @Inject()(userService: UserIdentityService)(implicit override val classTag: ClassTag[PasswordInfo], ec: ExecutionContext)
   extends DelegableAuthInfoDAO[PasswordInfo] {
 
   /**

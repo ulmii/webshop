@@ -38,3 +38,6 @@ POST          /userDetails                      controllers.UserDetailsControlle
 # Auth
 POST          /signUp                           controllers.SignUpController.signUp()
 POST          /signIn                           controllers.SignInController.signIn()
+
+# Social Auth
+GET     /authenticate/:provider  controllers.SocialAuthController.authenticate(provider: String)
