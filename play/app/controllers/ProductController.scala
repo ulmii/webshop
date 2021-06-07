@@ -1,16 +1,12 @@
 package controllers
 
-import java.time.Instant
-
 import javax.inject.{Inject, Singleton}
-import models.{Category, Product}
+import models.Product
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import reactivemongo.api.bson.BSONObjectID
 import repository.{CategoryRepository, ProductRepository}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 @Singleton
 class ProductController @Inject()(
@@ -27,12 +23,9 @@ class ProductController @Inject()(
   }
 
   def findOne(id: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    val objectIdTryResult = BSONObjectID.parse(id)
-    objectIdTryResult match {
-      case Success(objectId) => productRepository.findOne(id).map {
-        product => Ok(Json.toJson(product))
-      }
-      case Failure(_) => Future.successful(BadRequest("Cannot parse product id"))
+
+    productRepository.findOne(id).map {
+      product => Ok(Json.toJson(product))
     }
   }
 
@@ -41,9 +34,7 @@ class ProductController @Inject()(
     request.body.validate[Product].fold(
       _ => Future.successful(BadRequest("Cannot parse request")),
       product => {
-        categoryRepository.findByName("nowe").map(cat => if (cat.isEmpty) {
-          categoryRepository.create(new Category(name = "nowe", _updated = Some(Instant.now().getEpochSecond)))
-        })
+        categoryRepository.createIfNone(product)
 
         productRepository.create(product).map {
           _ => Created(Json.toJson(product))
@@ -57,12 +48,10 @@ class ProductController @Inject()(
     request.body.validate[Product].fold(
       _ => Future.successful(BadRequest("Cannot parse request")),
       product => {
-        val objectIdTryResult = BSONObjectID.parse(id)
-        objectIdTryResult match {
-          case Success(objectId) => productRepository.update(id, product).map {
-            result => Ok(Json.toJson(result.ok))
-          }
-          case Failure(_) => Future.successful(BadRequest("Cannot parse product id"))
+        categoryRepository.createIfNone(product)
+
+        productRepository.update(id, product).map {
+          result => Ok(Json.toJson(result.ok))
         }
       }
     )
@@ -70,12 +59,9 @@ class ProductController @Inject()(
   }
 
   def delete(id: String): Action[AnyContent] = Action.async { implicit request => {
-    val objectIdTryResult = BSONObjectID.parse(id)
-    objectIdTryResult match {
-      case Success(objectId) => productRepository.delete(id).map {
-        _ => NoContent
-      }
-      case Failure(_) => Future.successful(BadRequest("Cannot parse product id"))
+
+    productRepository.delete(id).map {
+      _ => NoContent
     }
   }
   }

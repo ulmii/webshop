@@ -6,12 +6,14 @@ import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter, BSONObjec
 
 case class Product(
                     id: Option[String] = Some(BSONObjectID.generate().stringify),
-                    title: Option[String],
+                    title: String,
                     description: Option[String],
+                    price: BigDecimal,
+                    category: Category,
                     _updated: Option[Long]
                   )
   extends ApiModel[Product] {
-  override protected def makeNew(updated: Option[Long]): Product = new Product(id = Some(BSONObjectID.generate().stringify), title, description, updated)
+  override protected def makeNew(updated: Option[Long]): Product = new Product(id = Some(BSONObjectID.generate().stringify), title, description, price, category, updated)
 }
 
 object Product {

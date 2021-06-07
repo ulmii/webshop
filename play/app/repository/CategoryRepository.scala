@@ -1,5 +1,7 @@
 package repository
 
+import java.time.Instant
+
 import javax.inject.Inject
 import models.Category
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -19,4 +21,11 @@ class CategoryRepository @Inject()(
   def findByName(name: String): Future[Option[Category]] = {
     collection.flatMap(_.find(BSONDocument("name" -> name), Option.empty[Category]).one[Category])
   }
+
+  def createIfNone(product: models.Product): Any = {
+    findByName(product.category.name).map(cat => if (cat.isEmpty) {
+      create(new Category(name = product.category.name, _updated = Some(Instant.now().getEpochSecond)))
+    })
+  }
+
 }

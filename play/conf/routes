@@ -4,38 +4,39 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET           /                           controllers.HomeController.index()
+GET           /                                 controllers.HomeController.index()
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                     controllers.Assets.versioned(path="/public", file: Asset)
 
 # products routing
-GET           /products                   controllers.ProductController.findAll()
-GET           /products/:id               controllers.ProductController.findOne(id: String)
-POST          /products                   controllers.ProductController.create()
-PUT           /products/:id               controllers.ProductController.update(id: String)
-DELETE        /products/:id               controllers.ProductController.delete(id: String)
+GET           /products                         controllers.ProductController.findAll()
+GET           /products/:id                     controllers.ProductController.findOne(id: String)
+POST          /products                         controllers.ProductController.create()
+PUT           /products/:id                     controllers.ProductController.update(id: String)
+DELETE        /products/:id                     controllers.ProductController.delete(id: String)
 
 # users routing
-GET           /users                      controllers.UserController.findAll()
-GET           /users/:id                  controllers.UserController.findOne(id: String)
-POST          /users                      controllers.UserController.create()
-PUT           /users/:id                  controllers.UserController.update(id: String)
-DELETE        /users/:id                  controllers.UserController.delete(id: String)
+GET           /users                            controllers.UserController.findAll()
+GET           /users/:id                        controllers.UserController.findOne(id: String)
+POST          /users                            controllers.UserController.create()
+PUT           /users/:id                        controllers.UserController.update(id: String)
+DELETE        /users/:id                        controllers.UserController.delete(id: String)
 
 # category routing
-GET           /categories                 controllers.CategoryController.findAll()
+GET           /categories                       controllers.CategoryController.findAll()
+GET           /categories/products/:name        controllers.CategoryController.findProducts(name: String)
 
 # basket routing
-GET           /baskets                    controllers.BasketController.findAll()
-GET           /baskets/:userId            controllers.BasketController.findOne(userId: String)
-POST          /baskets                    controllers.BasketController.create()
+GET           /baskets                          controllers.BasketController.findAll()
+GET           /baskets/:userId                  controllers.BasketController.findOne(userId: String)
+POST          /baskets                          controllers.BasketController.create()
 
 # user details routing
-GET           /userDetails                controllers.UserDetailsController.findAll()
-GET           /userDetails/:userId        controllers.UserDetailsController.findOne(userId: String)
-POST          /userDetails                controllers.UserDetailsController.create()
+GET           /userDetails                      controllers.UserDetailsController.findAll()
+GET           /userDetails/:userId              controllers.UserDetailsController.findOne(userId: String)
+POST          /userDetails                      controllers.UserDetailsController.create()
 
 # Auth
-POST        /signUp                                   controllers.SignUpController.signUp()
-POST        /signIn                                   controllers.SignInController.signIn()
+POST          /signUp                           controllers.SignUpController.signUp()
+POST          /signIn                           controllers.SignInController.signIn()
