@@ -1,9 +1,7 @@
 package models
 
-import java.time.Instant
-
 import com.mohiva.play.silhouette.api.util.PasswordInfo
-import com.mohiva.play.silhouette.api.{AuthInfo, Identity, LoginInfo}
+import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import com.mohiva.play.silhouette.password.BCryptSha256PasswordHasher
 import play.api.libs.json.{Json, OFormat}

@@ -41,7 +41,7 @@ abstract class AbstractRepository[T <: ApiModel[T] : BSONDocumentReader : BSONDo
     collection.flatMap(_.insert(ordered = false)
       .one(apiModel.copyNew(Some(Instant.now().getEpochSecond))))
 
-      Future.successful(apiModel)
+    Future.successful(apiModel)
   }
 
   def update(id: String, apiModel: T): Future[WriteResult] = {

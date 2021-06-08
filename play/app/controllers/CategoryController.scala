@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import models.Category
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, Request}
 import repository.{CategoryRepository, ProductRepository}
 
 import scala.concurrent.ExecutionContext

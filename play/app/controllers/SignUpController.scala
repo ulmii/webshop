@@ -14,8 +14,8 @@ import scala.concurrent.{ExecutionContext, Future}
  * The `Sign Up` controller.
  */
 class SignUpController @Inject()(
-  components: SilhouetteControllerComponents
-)(implicit ex: ExecutionContext) extends SilhouetteController(components) {
+                                  components: SilhouetteControllerComponents,
+                                )(implicit ex: ExecutionContext) extends SilhouetteController(components) {
 
   /**
    * Handles sign up request
@@ -30,9 +30,17 @@ class SignUpController @Inject()(
           case Some(_) =>
             Future.successful(Conflict(JsString(messagesApi("user.already.exist"))))
           case None =>
+            val loginInfo = LoginInfo(CredentialsProvider.ID, newUser.email)
             val authInfo = passwordHasherRegistry.current.hash(newUser.password.get)
             val user = newUser.copy(password = Some(authInfo.password))
-            userService.create(user).map(_ => Ok(Json.toJson(user.copy(password = None))))
+            for {
+              _ <- userService.create(user)
+              authenticator <- authenticatorService.create(loginInfo)
+              authInfo <- authInfoRepository.add(loginInfo, authInfo)
+              authToken <- authenticatorService.init(authenticator)
+            } yield {
+              Ok(Json.toJson(user.copy(password = None)))
+            }
         }
       case _ => Future.successful(BadRequest(JsString(messagesApi("invalid.body"))))
     }

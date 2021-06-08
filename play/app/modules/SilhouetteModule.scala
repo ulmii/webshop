@@ -24,12 +24,12 @@ import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.ceedubs.ficus.readers.ValueReader
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import play.api.libs.ws.WSClient
 import play.api.mvc.Cookie
 import play.modules.reactivemongo.ReactiveMongoApi
 import services.UserIdentityService
-import utils.auth.{CustomSecuredErrorHandler, CustomUnsecuredErrorHandler, DefaultEnv, PasswordInfoImpl}
+import utils.auth.{CustomSecuredErrorHandler, CustomUnsecuredErrorHandler, DefaultEnv}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -130,18 +130,15 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     ), None, encoder, idGenerator, clock)
   }
 
-  /**
-   * Provides auth info delegable auth info repository.
-   *
-   * @param userDao Operations with user table in database
-   * @return DelegableAuthInfoDAO implementation
-   */
   @Provides
-  def providePasswordDAO(userService: UserIdentityService): DelegableAuthInfoDAO[PasswordInfo] = new PasswordInfoImpl(userService)
+  def providePasswordInfoDAO(reactiveMongoApi: ReactiveMongoApi, config: Configuration): DelegableAuthInfoDAO[PasswordInfo] = {
+    implicit lazy val format: OFormat[PasswordInfo] = Json.format[PasswordInfo]
+    new MongoAuthInfoDAO[PasswordInfo](reactiveMongoApi, config)
+  }
 
   @Provides
   def provideOAuth2InfoDAO(reactiveMongoApi: ReactiveMongoApi, config: Configuration): DelegableAuthInfoDAO[OAuth2Info] = {
-    implicit lazy val format = Json.format[OAuth2Info]
+    implicit lazy val format: OFormat[OAuth2Info] = Json.format[OAuth2Info]
     new MongoAuthInfoDAO[OAuth2Info](reactiveMongoApi, config)
   }
 

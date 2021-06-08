@@ -17,7 +17,7 @@ RUN apt-get -qq update && apt upgrade -y \
 
 RUN apt-get -qq install --no-install-recommends -y openjdk-8-jdk
 
-ENV SCALA_VERSION=2.13.5
+ENV SCALA_VERSION=2.12.10
 
 RUN echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" \
     | tee /etc/apt/sources.list.d/sbt.list \

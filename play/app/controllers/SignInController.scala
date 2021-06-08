@@ -13,10 +13,11 @@ import scala.concurrent.{ExecutionContext, Future}
  * The `Sign In` controller.
  */
 class SignInController @Inject()(
-  scc: SilhouetteControllerComponents
-)(implicit ex: ExecutionContext) extends SilhouetteController(scc) {
+                                  scc: SilhouetteControllerComponents
+                                )(implicit ex: ExecutionContext) extends SilhouetteController(scc) {
 
   case class SignInModel(email: String, password: String)
+
   implicit val signInFormat: OFormat[SignInModel] = Json.format[SignInModel]
 
   /**
