@@ -36,7 +36,7 @@ class SignInController @Inject()(
               for {
                 authenticator <- authenticatorService.create(loginInfo)
                 token <- authenticatorService.init(authenticator)
-                result <- authenticatorService.embed(token, Ok)
+                result <- authenticatorService.embed(token, Ok.withHeaders(("access-control-expose-headers", "X-Auth")))
               } yield {
                 logger.debug(s"User ${loginInfo.providerKey} signed success")
                 result

@@ -27,7 +27,7 @@ GET           /categories                       controllers.CategoryController.f
 GET           /categories/products/:name        controllers.CategoryController.findProducts(name: String)
 
 # basket routing
-GET           /baskets                  controllers.BasketController.findOne()
+GET           /baskets                          controllers.BasketController.findOne()
 POST          /baskets                          controllers.BasketController.create()
 
 # user details routing
@@ -36,8 +36,11 @@ GET           /userDetails/:userId              controllers.UserDetailsControlle
 POST          /userDetails                      controllers.UserDetailsController.create()
 
 # Auth
-POST          /signUp                           controllers.SignUpController.signUp()
-POST          /signIn                           controllers.SignInController.signIn()
+POST          /auth/signUp                           controllers.SignUpController.signUp()
+POST          /auth/signIn                           controllers.SignInController.signIn()
 
 # Social Auth
-GET     /authenticate/:provider  controllers.SocialAuthController.authenticate(provider: String)
+GET           /authenticate/:provider           controllers.SocialAuthController.authenticate(provider: String)
+
+# profile
+GET           /profile                     controllers.ProfileController.findOne()
