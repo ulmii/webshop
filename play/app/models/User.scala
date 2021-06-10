@@ -38,9 +38,9 @@ object User {
   implicit val bLoginInfo: OFormat[LoginInfo] = Json.format[LoginInfo]
   implicit val fmt: OFormat[User] = Json.format[User]
 
-  implicit def LoginInfoReader: BSONDocumentReader[LoginInfo] = Macros.reader[LoginInfo]
+  implicit def loginInfoReader: BSONDocumentReader[LoginInfo] = Macros.reader[LoginInfo]
 
-  implicit def LoginInfoWriter: BSONDocumentWriter[LoginInfo] = Macros.writer[LoginInfo]
+  implicit def loginInfoWriter: BSONDocumentWriter[LoginInfo] = Macros.writer[LoginInfo]
 
   implicit def userWriter: BSONDocumentWriter[User] = Macros.writer[User]
 

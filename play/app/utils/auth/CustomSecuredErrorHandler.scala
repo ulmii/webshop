@@ -39,6 +39,5 @@ class CustomSecuredErrorHandler @Inject()(val messagesApi: MessagesApi) extends 
    */
   override def onNotAuthorized(implicit request: RequestHeader): Future[api.mvc.Results.Status] = {
     Future.successful(Forbidden)
-    //    Future.successful(Redirect(controllers.routes.SignInController.view()).flashing("error" -> Messages("access.denied")))
   }
 }

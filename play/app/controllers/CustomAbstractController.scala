@@ -13,6 +13,7 @@ abstract class CustomAbstractController[T: Writes : Reads](
                                                             val repository: Repository[T],
                                                             scc: SilhouetteControllerComponents
                                                           ) extends SilhouetteController(scc) {
+  val ERROR_ID = "Cannot parse id"
 
   def findAll(): Action[AnyContent] = Action.async(implicit request => {
     repository.findAll()
@@ -25,7 +26,7 @@ abstract class CustomAbstractController[T: Writes : Reads](
     val objectIdTryResult = BSONObjectID.parse(id)
     objectIdTryResult match {
       case Success(objectId) => repository.findOne(id).map(model => Ok(Json.toJson(model)))
-      case Failure(_) => Future.successful(BadRequest("Cannot parse id"))
+      case Failure(_) => Future.successful(BadRequest(ERROR_ID))
     }
   })
 
@@ -46,7 +47,7 @@ abstract class CustomAbstractController[T: Writes : Reads](
         val objectIdTryResult = BSONObjectID.parse(id)
         objectIdTryResult match {
           case Success(objectId) => repository.update(id, model).map(result => Ok(Json.toJson(result.ok)))
-          case Failure(_) => Future.successful(BadRequest("Cannot parse id"))
+          case Failure(_) => Future.successful(BadRequest(ERROR_ID))
         }
       }
     )
@@ -57,7 +58,7 @@ abstract class CustomAbstractController[T: Writes : Reads](
     val objectIdTryResult = BSONObjectID.parse(id)
     objectIdTryResult match {
       case Success(objectId) => repository.delete(id).map(_ => NoContent)
-      case Failure(_) => Future.successful(BadRequest("Cannot parse id"))
+      case Failure(_) => Future.successful(BadRequest(ERROR_ID))
     }
   })
 }

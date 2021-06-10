@@ -20,9 +20,9 @@ import utils.auth.DefaultEnv
 abstract class SilhouetteController(override protected val controllerComponents: SilhouetteControllerComponents)
   extends MessagesAbstractController(controllerComponents) with SilhouetteComponents with I18nSupport with Logging {
 
-  def SecuredAction: SecuredActionBuilder[EnvType, AnyContent] = controllerComponents.silhouette.SecuredAction
+  def securedAction: SecuredActionBuilder[EnvType, AnyContent] = controllerComponents.silhouette.SecuredAction
 
-  def UnsecuredAction: UnsecuredActionBuilder[EnvType, AnyContent] = controllerComponents.silhouette.UnsecuredAction
+  def unsecuredAction: UnsecuredActionBuilder[EnvType, AnyContent] = controllerComponents.silhouette.UnsecuredAction
 
   def userService: UserIdentityService = controllerComponents.userService
 
