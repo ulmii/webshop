@@ -14,4 +14,4 @@
 # ebiznes
 
 ## Dockerhub
-https://hub.docker.com/repository/docker/ulmii/ebiznes
+https://hub.docker.com/repository/docker/ulmii/webshop
