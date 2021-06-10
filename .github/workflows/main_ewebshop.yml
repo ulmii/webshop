@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_151ecbc64b7942d0a1c41d2b3bd72b16 }}/webshop:${{ github.sha }}
+        tags: ${{ secrets.AzureAppService_ContainerUsername_151ecbc64b7942d0a1c41d2b3bd72b16 }}/webshop:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -48,4 +48,4 @@ jobs:
         app-name: 'ewebshop'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_8cae9145ecdf4401bc4584cbe7138267 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_151ecbc64b7942d0a1c41d2b3bd72b16 }}/webshop:${{ github.sha }}'
+        images: '${{ secrets.AzureAppService_ContainerUsername_151ecbc64b7942d0a1c41d2b3bd72b16 }}/webshop:${{ github.sha }}'
