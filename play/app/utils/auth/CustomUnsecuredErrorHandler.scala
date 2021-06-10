@@ -22,6 +22,5 @@ class CustomUnsecuredErrorHandler extends UnsecuredErrorHandler {
    */
   override def onNotAuthorized(implicit request: RequestHeader): Future[mvc.Results.Status] = {
     Future.successful(Forbidden)
-    //    Future.successful(Redirect(controllers.routes.ApplicationController.index()))
   }
 }
