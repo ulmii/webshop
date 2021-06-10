@@ -34,4 +34,4 @@ COPY ./play /home/ulmii/webshop/
 WORKDIR /home/ulmii/webshop
 
 RUN sbt compile
-CMD sbt run
+CMD sbt -mem 1024 run
