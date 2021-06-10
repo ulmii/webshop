@@ -7,15 +7,14 @@ import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.impl.providers._
 import javax.inject.Inject
 import models.User
-import play.api.mvc.{Action, AnyContent, Request}
-import play.filters.csrf.CSRFAddToken
+import play.api.mvc.{Action, AnyContent, Cookie, Request}
 import reactivemongo.api.bson.BSONObjectID
 import services.UserIdentityService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
-                                     addToken: CSRFAddToken,
+                                     configuration: play.api.Configuration,
                                      userService: UserIdentityService)(implicit ex: ExecutionContext)
   extends SilhouetteController(scc) {
 
@@ -35,10 +34,10 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
             }
             authenticator <- authenticatorService.create(loginInfo)
             authToken <- authenticatorService.init(authenticator)
-            result <- authenticatorService.embed(authToken, Ok)
+            result <- authenticatorService.embed(authToken, Redirect(configuration.underlying.getString("hosts.client") +  "/sso?token=" + authToken))
           } yield {
             logger.debug(s"User ${profile.loginInfo.providerKey} signed success")
-            result
+            result.withCookies(Cookie("X-Auth", authToken, httpOnly = false))
           }
         }
       case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $provider"))

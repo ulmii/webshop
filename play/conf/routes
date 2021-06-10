@@ -44,3 +44,6 @@ GET           /authenticate/:provider           controllers.SocialAuthController
 
 # profile
 GET           /profile                     controllers.ProfileController.findOne()
+
+# sso routing
+GET           /sso                                 controllers.SSOController.index()
