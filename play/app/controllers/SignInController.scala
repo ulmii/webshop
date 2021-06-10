@@ -25,7 +25,7 @@ class SignInController @Inject()(
    *
    * @return JWT token in header if login is successful or Bad request if credentials are invalid
    */
-  def signIn: Action[AnyContent] = UnsecuredAction.async { implicit request: Request[AnyContent] =>
+  def signIn: Action[AnyContent] = unsecuredAction.async { implicit request: Request[AnyContent] =>
     implicit val lang: Lang = supportedLangs.availables.head
     request.body.asJson.flatMap(_.asOpt[SignInModel]) match {
       case Some(signInModel) =>

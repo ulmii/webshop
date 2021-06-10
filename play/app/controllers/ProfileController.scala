@@ -16,7 +16,7 @@ class ProfileController @Inject()(
                                    scc: SilhouetteControllerComponents)
   extends SilhouetteController(scc) {
 
-  def findOne(): Action[AnyContent] = SecuredAction(WithProvider[DefaultEnv#A]("google")
+  def findOne(): Action[AnyContent] = securedAction(WithProvider[DefaultEnv#A]("google")
     || WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(implicit request => {
 
     userService.retrieve(request.identity.loginInfo).flatMap {
