@@ -11,7 +11,10 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=ulmii_webshop&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=ulmii_webshop)
 
 
-# ebiznes
+# Webshop - ebiznes project
 
 ## Dockerhub
 https://hub.docker.com/repository/docker/ulmii/webshop
+
+## Azure cloud
+https://ewebshop.azurewebsites.net
