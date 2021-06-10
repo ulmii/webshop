@@ -16,5 +16,8 @@
 ## Dockerhub
 https://hub.docker.com/repository/docker/ulmii/webshop
 
-## Azure cloud
+## API - Azure cloud
 https://ewebshop.azurewebsites.net
+
+## Client -  Azure cloud
+https://webshop-client.azurewebsites.net
