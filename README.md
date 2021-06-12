@@ -1,3 +1,4 @@
+![Workflow](https://github.com/ulmii/webshop/actions/workflows/main_ewebshop.yml/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ulmii_webshop&metric=alert_status)](https://sonarcloud.io/dashboard?id=ulmii_webshop)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=ulmii_webshop&metric=bugs)](https://sonarcloud.io/dashboard?id=ulmii_webshop)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ulmii_webshop&metric=code_smells)](https://sonarcloud.io/dashboard?id=ulmii_webshop)
@@ -10,7 +11,13 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=ulmii_webshop&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=ulmii_webshop)
 
 
-# ebiznes
+# Webshop - ebiznes project
 
 ## Dockerhub
-https://hub.docker.com/repository/docker/ulmii/ebiznes
+https://hub.docker.com/repository/docker/ulmii/webshop
+
+## API - Azure cloud
+https://ewebshop.azurewebsites.net
+
+## Client -  Azure cloud
+https://webshop-client.azurewebsites.net
