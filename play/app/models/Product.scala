@@ -10,10 +10,11 @@ case class Product(
                     description: Option[String],
                     price: BigDecimal,
                     category: Category,
+                    imageUrl: String,
                     _updated: Option[Long]
                   )
   extends ApiModel[Product] {
-  override protected def makeNew(updated: Option[Long]): Product = new Product(id = Some(BSONObjectID.generate().stringify), title, description, price, category, updated)
+  override protected def makeNew(updated: Option[Long]): Product = new Product(id = Some(BSONObjectID.generate().stringify), title, description, price, category, imageUrl, updated)
 }
 
 object Product {
